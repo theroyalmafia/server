@@ -1,0 +1,40 @@
+<?php
+
+
+
+
+use \Psr\Http\Message\ServerRequestInterface as Request;
+use \Psr\Http\Message\ResponseInterface as Response;
+
+require '/home/sakshi/vendor/autoload.php';
+
+$app = new \Slim\App;
+$app->post('/search', function (Request $request, Response $response) {
+ //$name = $request->getAttribute('name');
+ $array1=$request->getParsedBody();
+    //$final=json_encode($json_string);
+    //echo "hi";
+//$r=$_POST['number_of_threads'];
+    //echo $app->json_body['number_of_threads'];
+//echo $r;
+var_dump($array1);
+	//$result = array();
+	//$result["success"] = "1";
+   //echo $json_string;
+//echo $final;
+//var_dump($array1);
+//return "nfkwognvdoiwvnjo";
+//return $array1;
+echo $array1;
+ //return $response->withJson($array1,200);
+//return $r;
+//return $app->json_body['number_of_threads'];
+});
+$app->get('/sample/{name}', function (Request $request, Response $response) {
+    $name = $request->getAttribute('name');
+    $response->getBody()->write("Hello, $name");
+
+    return $response;
+});
+$app->run();
+?>

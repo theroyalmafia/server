@@ -1,0 +1,57 @@
+<?php
+use \Psr\Http\Message\ServerRequestInterface as Request;
+use \Psr\Http\Message\ResponseInterface as Response;
+
+require '../vendor/autoload.php';
+
+$app = new \Slim\App;
+
+$app->get('/go/{name}', function (Request $request, Response $response) {
+    $name = $request->getAttribute('name');
+$output = shell_exec('./sysbench2.sh');
+if(isset($output))
+{
+$myfile = fopen("gocpu.txt", "r");
+if ($myfile) {
+ while (($line = fgets($myfile)) !== false) {
+if (preg_match('/Number of threads:/', $line, $match)) {
+
+$keyw=preg_split("/[\s,]+/",$line);
+$result=array();
+array_push($result,array(
+    "number_of_threads" => $keyw[3]));
+
+}//if
+if (preg_match('/total time:/', $line, $match)) {
+$keyw=preg_split("/[\s,]+/",$line);
+array_push($result,array("total time" => $keyw[3]));
+}//if
+}//while
+$newresponse = json_encode($result);
+$arr1=array('[',']');
+$arr2=array(' ',' ');
+
+$new2=str_replace($arr1,$arr2,$newresponse);
+
+$url='http://198.89.127.49/';
+
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $url);
+curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+curl_setopt($ch, CURLOPT_POST, 1);
+curl_setopt($ch, CURLOPT_POSTFIELDS,$new2);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+$response  = curl_exec($ch);
+curl_close($ch);
+
+
+
+
+return $new2;
+}//if myfile
+}//if isset
+});
+   
+$app->run();
+
+?>
